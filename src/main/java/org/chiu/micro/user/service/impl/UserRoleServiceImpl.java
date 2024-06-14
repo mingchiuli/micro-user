@@ -109,11 +109,6 @@ public class UserRoleServiceImpl implements UserRoleService {
         if (Objects.isNull(exist) || Boolean.FALSE.equals(exist)) {
             throw new MissException(NO_AUTH.getMsg());
         }
-        String password = userEntityRegisterReq.getPassword();
-        String confirmPassword = userEntityRegisterReq.getConfirmPassword();
-        if (!Objects.equals(confirmPassword, password)) {
-            throw new MissException(PASSWORD_DIFF.getMsg());
-        }
 
         String phone = userEntityRegisterReq.getPhone();
         if (!StringUtils.hasLength(phone)) {
@@ -129,8 +124,8 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         UserEntityReq userEntityReq = new UserEntityReq();
 
-        Optional<UserEntity> userEntity = userRepository.findByUsernameAndStatus(username, NORMAL.getCode());
-        userEntity.ifPresent(entity -> userEntityRegisterReq.setId(entity.getId()));
+        userRepository.findByUsernameAndStatus(username, NORMAL.getCode())
+                .ifPresent(entity -> userEntityRegisterReq.setId(entity.getId()));
 
         BeanUtils.copyProperties(userEntityRegisterReq, userEntityReq);
         userEntityReq.setRoles(Collections.singletonList(USER.getInfo()));

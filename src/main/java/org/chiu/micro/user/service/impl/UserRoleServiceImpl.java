@@ -27,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -55,6 +56,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
 
     private final ApplicationContext applicationContext;
 
@@ -75,15 +77,15 @@ public class UserRoleServiceImpl implements UserRoleService {
             if (StringUtils.hasLength(password)) {
                 userEntityReq.setPassword(password);
             } else {
-                userEntityReq.setPassword(userEntity.getPassword());
+                userEntityReq.setPassword(passwordEncoder.encode(password));
             }
             userOperateEnum = UserOperateEnum.UPDATE;
         } else {
             userEntity = new UserEntity();
             userEntityReq.setPassword(
-                    Optional.ofNullable(userEntityReq.getPassword())
+                    passwordEncoder.encode(Optional.ofNullable(userEntityReq.getPassword())
                             .orElseThrow(() -> new CommitException(PASSWORD_REQUIRED))
-                    
+        )
             );
             userOperateEnum = UserOperateEnum.CREATE;
         }
@@ -108,6 +110,11 @@ public class UserRoleServiceImpl implements UserRoleService {
         Boolean exist = redisTemplate.hasKey(REGISTER_PREFIX.getInfo() + token);
         if (Objects.isNull(exist) || Boolean.FALSE.equals(exist)) {
             throw new MissException(NO_AUTH.getMsg());
+        }
+        String password = userEntityRegisterReq.getPassword();
+        String confirmPassword = userEntityRegisterReq.getConfirmPassword();
+        if (!Objects.equals(confirmPassword, password)) {
+            throw new MissException(PASSWORD_DIFF.getMsg());
         }
 
         String phone = userEntityRegisterReq.getPhone();

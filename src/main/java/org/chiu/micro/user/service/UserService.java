@@ -2,6 +2,8 @@ package org.chiu.micro.user.service;
 
 
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.chiu.micro.user.vo.UserEntityRpcVo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -28,4 +30,6 @@ public interface UserService {
     Boolean checkRegisterPage(String token);
 
     void download(HttpServletResponse response);
+
+    UserEntityRpcVo findById(Long userId);
 }

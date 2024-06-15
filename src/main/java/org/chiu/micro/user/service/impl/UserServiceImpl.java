@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.chiu.micro.user.http.OssHttpService;
 import org.chiu.micro.user.utils.OssSignUtils;
+import org.chiu.micro.user.vo.UserEntityRpcVo;
+import org.chiu.micro.user.convertor.UserEntityRpcVoConvertor;
 import org.chiu.micro.user.entity.UserEntity;
 import org.chiu.micro.user.exception.MissException;
 import org.chiu.micro.user.repository.UserRepository;
@@ -136,5 +138,12 @@ public class UserServiceImpl implements UserService {
         outputStream.write(bytes);
         outputStream.flush();
         outputStream.close();
+    }
+
+    @Override
+    public UserEntityRpcVo findById(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                    .orElseThrow(() -> new MissException(NO_FOUND.getMsg()));
+        return UserEntityRpcVoConvertor.convert(user);
     }
 }

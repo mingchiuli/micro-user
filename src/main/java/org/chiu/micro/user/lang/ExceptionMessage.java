@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ExceptionMessage {
 
-    NO_AUTH(0, "没有权限，请重新登录"),
+    NO_AUTH(0, "没有权限"),
 
     NO_FOUND(1, "没有找到内容"),
 

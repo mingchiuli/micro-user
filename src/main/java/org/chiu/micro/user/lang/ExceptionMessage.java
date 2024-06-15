@@ -39,10 +39,6 @@ public enum ExceptionMessage {
 
     EMAIL_NOT_EXIST(16, "email不存在"),
 
-    WEB_NOT_EXIST(17, "web不存在"),
-
-    DOCUMENT_NOT_EXIST(18, "web不存在"),
-
     CODE_TRY_MAX(19, "code reach max try number"),
 
     CODE_EXPIRED(20, "code expired"),
@@ -75,7 +71,7 @@ public enum ExceptionMessage {
 
     ACCOUNT_LOCKED(34, "账户被锁"),
 
-    RE_LOGIN(35, "重新登里"),
+    RE_LOGIN(35, "重新登录"),
 
     PASSWORD_DIFF(36, "账号密码不一致"),
 

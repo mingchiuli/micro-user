@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
+import org.chiu.micro.user.lang.Result;
 import org.chiu.micro.user.service.UserService;
 import org.chiu.micro.user.vo.UserEntityRpcVo;
 import org.springframework.validation.annotation.Validated;
@@ -25,8 +26,8 @@ public class UserProvider {
     private final UserService userService;
 
     @GetMapping("/user/{userId}")
-    public UserEntityRpcVo findById(@PathVariable Long userId) {
-        return userService.findById(userId);
+    public Result<UserEntityRpcVo> findById(@PathVariable Long userId) {
+        return Result.success(() -> userService.findById(userId));
     }
     
 }

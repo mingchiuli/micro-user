@@ -14,7 +14,7 @@ import java.time.Duration;
 
 
 @Configuration
-public class OssHttpConfig {
+public class RpcHttpConfig {
 
     @Value("${blog.aliyun.oss.bucket-name}")
     private String bucketName;

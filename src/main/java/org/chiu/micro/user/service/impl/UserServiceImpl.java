@@ -143,7 +143,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntityRpcVo findById(Long userId) {
         UserEntity user = userRepository.findById(userId)
-                    .orElseThrow(() -> new MissException(NO_FOUND.getMsg()));
+                .orElseThrow(() -> new MissException(USER_MISS.getMsg()));
         return UserEntityRpcVoConvertor.convert(user);
+    }
+
+    @Override
+    public UserEntityRpcVo findByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email)
+                .orElseThrow(() -> new MissException(EMAIL_NOT_EXIST.getMsg()));
+        return UserEntityRpcVoConvertor.convert(userEntity);
+    }
+
+    @Override
+    public UserEntityRpcVo findByPhone(String phone) {
+        UserEntity userEntity = userRepository.findByPhone(phone)
+                .orElseThrow(() -> new MissException(PHONE_NOT_EXIST.getMsg()));
+        return UserEntityRpcVoConvertor.convert(userEntity);
+    }
+
+    @Override
+    public UserEntityRpcVo findByUsernameOrEmailOrPhone(String username) {
+        UserEntity userEntity =  userRepository.findByUsernameOrEmailOrPhone(username, username, username)
+                .orElseThrow(() -> new MissException(USER_MISS.getMsg()));
+        return UserEntityRpcVoConvertor.convert(userEntity);
     }
 }

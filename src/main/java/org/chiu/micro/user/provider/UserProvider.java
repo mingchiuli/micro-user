@@ -5,13 +5,21 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import org.chiu.micro.user.lang.Result;
+import org.chiu.micro.user.service.RoleAuthorityService;
+import org.chiu.micro.user.service.RoleService;
+import org.chiu.micro.user.service.UserRoleService;
 import org.chiu.micro.user.service.UserService;
+import org.chiu.micro.user.vo.RoleEntityRpcVo;
 import org.chiu.micro.user.vo.UserEntityRpcVo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+import java.time.LocalDateTime;
 
 
 /**
@@ -25,9 +33,55 @@ public class UserProvider {
 
     private final UserService userService;
 
+    private final RoleService roleService;
+
+    private final UserRoleService userRoleService;
+
+    private final RoleAuthorityService roleAuthorityService;
+
     @GetMapping("/user/{userId}")
     public Result<UserEntityRpcVo> findById(@PathVariable Long userId) {
         return Result.success(() -> userService.findById(userId));
     }
-    
+
+
+    @GetMapping("/user/status/{username}/{status}")
+    public Result<Void> changeUserStatusByUsername(@PathVariable String username, @PathVariable Integer status) {
+        return Result.success(() -> userService.changeUserStatusByUsername(username, status));
+    }
+
+    @PostMapping("/user/role/{status}")
+    public Result<List<RoleEntityRpcVo>> findByRoleCodeInAndStatus(@RequestBody List<String> roles, @PathVariable(value = "status") Integer status) {
+        return Result.success(() -> roleService.findByRoleCodeInAndStatus(roles, status));
+    }
+
+    @PostMapping("/user/login/time/{username}")
+    void updateLoginTime(@PathVariable String username) {
+        userService.updateLoginTime(username, LocalDateTime.now());
+    }
+
+    @GetMapping("/user/email/{email}")
+    Result<UserEntityRpcVo> findByEmail(@PathVariable(value = "email") String email) {
+        return Result.success(() -> userService.findByEmail(email));
+    }
+
+    @GetMapping("/user/phone/{phone}")
+    Result<UserEntityRpcVo> findByPhone(@PathVariable(value = "phone") String phone) {
+        return Result.success(() -> userService.findByPhone(phone));
+    }
+
+    @GetMapping("/user/role/{userId}")
+    Result<List<String>> findRoleCodesDecorByUserId(@PathVariable(value = "userId") Long userId) {
+        return Result.success(() -> userRoleService.findRoleCodesDecorByUserId(userId));
+    }
+
+    @GetMapping("/user/login/query/{username}")
+    Result<UserEntityRpcVo> findByUsernameOrEmailOrPhone(@PathVariable(value = "username") String username) {
+        return Result.success(() -> userService.findByUsernameOrEmailOrPhone(username));
+    }
+
+    @PostMapping("/user/role/authority")
+    Result<List<String>> getAuthoritiesByRoleCodes(@RequestBody List<String> rawRoles) {
+        return Result.success(() -> roleAuthorityService.getAuthoritiesByRoleCodes(rawRoles));
+    }
 }

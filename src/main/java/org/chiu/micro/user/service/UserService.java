@@ -32,4 +32,10 @@ public interface UserService {
     void download(HttpServletResponse response);
 
     UserEntityRpcVo findById(Long userId);
+
+    UserEntityRpcVo findByEmail(String email);
+
+    UserEntityRpcVo findByPhone(String phone);
+
+    UserEntityRpcVo findByUsernameOrEmailOrPhone(String username);
 }

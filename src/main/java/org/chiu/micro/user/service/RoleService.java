@@ -4,6 +4,7 @@ package org.chiu.micro.user.service;
 import jakarta.servlet.http.HttpServletResponse;
 import org.chiu.micro.user.req.RoleEntityReq;
 import org.chiu.micro.user.page.PageAdapter;
+import org.chiu.micro.user.vo.RoleEntityRpcVo;
 import org.chiu.micro.user.vo.RoleEntityVo;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface RoleService {
     void download(HttpServletResponse response);
 
     List<RoleEntityVo> getValidAll();
+
+    List<RoleEntityRpcVo> findByRoleCodeInAndStatus(List<String> roles, Integer status);
 }

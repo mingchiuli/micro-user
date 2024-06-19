@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+
+import org.chiu.micro.user.convertor.RoleEntityRpcVoConvertor;
 import org.chiu.micro.user.convertor.RoleEntityVoConvertor;
 import org.chiu.micro.user.entity.RoleEntity;
 import org.chiu.micro.user.repository.RoleRepository;
@@ -13,6 +15,8 @@ import org.chiu.micro.user.exception.MissException;
 import org.chiu.micro.user.lang.StatusEnum;
 import org.chiu.micro.user.page.PageAdapter;
 import lombok.RequiredArgsConstructor;
+
+import org.chiu.micro.user.vo.RoleEntityRpcVo;
 import org.chiu.micro.user.vo.RoleEntityVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -95,5 +99,11 @@ public class RoleServiceImpl implements RoleService {
     public List<RoleEntityVo> getValidAll() {
         List<RoleEntity> entities = roleRepository.findByStatus(StatusEnum.NORMAL.getCode());
         return RoleEntityVoConvertor.convert(entities);
+    }
+
+    @Override
+    public List<RoleEntityRpcVo> findByRoleCodeInAndStatus(List<String> roles, Integer status) {
+        List<RoleEntity> entities = roleRepository.findByCodeInAndStatus(roles, status);
+        return RoleEntityRpcVoConvertor.convert(entities);
     }
 }

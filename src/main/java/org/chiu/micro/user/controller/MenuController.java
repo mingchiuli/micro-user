@@ -33,7 +33,7 @@ public class MenuController {
 
     private final RoleMenuService roleMenuService;
 
-    @GetMapping("/nav")
+    @PostMapping("/nav")
     public Result<MenusAndButtonsVo> nav(@RequestBody @NotEmpty List<String> roles) {
         return Result.success(() -> roleMenuService.getCurrentUserNav(roles));
     }

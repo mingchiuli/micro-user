@@ -15,6 +15,8 @@ public class UserEntityRpcVo {
 
     private String nickname;
 
+    private String password;
+
     private String avatar;
 
     private String email;

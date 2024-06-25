@@ -10,6 +10,7 @@ public class UserEntityRpcVoConvertor {
     public static UserEntityRpcVo convert(UserEntity user) {
         return UserEntityRpcVo.builder()
                 .id(user.getId())
+                .password(user.getPassword())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .nickname(user.getNickname())

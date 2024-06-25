@@ -37,5 +37,8 @@ public class CustomRuntimeHints implements RuntimeHintsRegistrar {
         hints.reflection().registerType(
                 TypeReference.of("com.github.benmanes.caffeine.cache.SSMSA"),
                 MemberCategory.PUBLIC_FIELDS, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+
+        hints.resources().registerPattern("ValidationMessages.properties");
+
     }
 }

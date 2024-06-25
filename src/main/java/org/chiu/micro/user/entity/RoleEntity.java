@@ -42,7 +42,7 @@ public class RoleEntity {
     @Column(name = "remark")
     private String remark;
 
-    @Column(name = "created")
+    @Column(name = "created", updatable = false)
     @CreatedDate
     private LocalDateTime created;
 

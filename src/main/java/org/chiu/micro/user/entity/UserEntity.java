@@ -54,7 +54,7 @@ public class UserEntity {
     @Column(name = "status")
     private Integer status;
 
-    @Column(name = "created")
+    @Column(name = "created", updatable = false)
     @CreatedDate
     private LocalDateTime created;
 

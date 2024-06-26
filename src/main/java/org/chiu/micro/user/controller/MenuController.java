@@ -1,6 +1,5 @@
 package org.chiu.micro.user.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 
 import org.chiu.micro.user.service.MenuService;
@@ -59,9 +58,9 @@ public class MenuController {
     }
 
     @GetMapping("/download")
-    public Result<Void> download(HttpServletResponse response) {
-        menuService.download(response);
-        return Result.success();
+    public Result<byte[]> download() {
+        byte[] data = menuService.download();
+        return Result.success(data);
     }
 
 }

@@ -2,8 +2,6 @@ package org.chiu.micro.user.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.chiu.micro.user.exception.MissException;
@@ -17,7 +15,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.chiu.micro.user.convertor.AuthorityVoConvertor;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,14 +67,8 @@ public class AuthorityServiceImpl implements AuthorityService {
 
     @SneakyThrows
     @Override
-    public void download(HttpServletResponse response) {
-        ServletOutputStream outputStream = response.getOutputStream();
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-
+    public byte[] download() {
         List<AuthorityEntity> authorities = authorityRepository.findAll();
-        byte[] bytes = objectMapper.writeValueAsBytes(authorities);
-        outputStream.write(bytes);
-        outputStream.flush();
-        outputStream.close();
+        return objectMapper.writeValueAsBytes(authorities);
     }
 }

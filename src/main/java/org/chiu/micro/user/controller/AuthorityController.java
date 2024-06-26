@@ -1,6 +1,5 @@
 package org.chiu.micro.user.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +43,8 @@ public class AuthorityController {
     }
 
     @GetMapping("/download")
-    public Result<Void> download(HttpServletResponse response) {
-        authorityService.download(response);
-        return Result.success();
+    public Result<byte[]> download() {
+        byte[] data = authorityService.download();
+        return Result.success(data);
     }
 }

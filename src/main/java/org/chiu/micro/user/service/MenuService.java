@@ -1,7 +1,6 @@
 package org.chiu.micro.user.service;
 
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.chiu.micro.user.req.MenuEntityReq;
 import org.chiu.micro.user.vo.MenuDisplayVo;
 import org.chiu.micro.user.vo.MenuEntityVo;
@@ -20,5 +19,5 @@ public interface MenuService {
 
     List<MenuDisplayVo> tree();
 
-    void download(HttpServletResponse response);
+    byte[] download();
 }

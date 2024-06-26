@@ -1,6 +1,5 @@
 package org.chiu.micro.user.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.chiu.micro.user.service.RoleAuthorityService;
 import org.chiu.micro.user.service.RoleMenuService;
 import org.chiu.micro.user.service.RoleService;
@@ -79,9 +78,9 @@ public class RoleController {
     }
 
     @GetMapping("/download")
-    public Result<Void> download(HttpServletResponse response) {
-        roleService.download(response);
-        return Result.success();
+    public Result<byte[]> download() {
+        byte[] data = roleService.download();
+        return Result.success(data);
     }
 
     @GetMapping("/valid/all")

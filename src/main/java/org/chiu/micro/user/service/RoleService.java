@@ -1,7 +1,6 @@
 package org.chiu.micro.user.service;
 
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.chiu.micro.user.req.RoleEntityReq;
 import org.chiu.micro.user.page.PageAdapter;
 import org.chiu.micro.user.vo.RoleEntityRpcVo;
@@ -23,7 +22,7 @@ public interface RoleService {
 
     void delete(List<Long> ids);
 
-    void download(HttpServletResponse response);
+    byte[] download();
 
     List<RoleEntityVo> getValidAll();
 

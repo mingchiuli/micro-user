@@ -1,8 +1,6 @@
 package org.chiu.micro.user.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.chiu.micro.user.http.OssHttpService;
 import org.chiu.micro.user.utils.OssSignUtils;
@@ -24,7 +22,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -129,15 +126,9 @@ public class UserServiceImpl implements UserService {
 
     @SneakyThrows
     @Override
-    public void download(HttpServletResponse response) {
-        ServletOutputStream outputStream = response.getOutputStream();
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-
+    public byte[] download() {
         List<UserEntity> users = userRepository.findAll();
-        byte[] bytes = objectMapper.writeValueAsBytes(users);
-        outputStream.write(bytes);
-        outputStream.flush();
-        outputStream.close();
+        return objectMapper.writeValueAsBytes(users);
     }
 
     @Override

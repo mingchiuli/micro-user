@@ -1,8 +1,6 @@
 package org.chiu.micro.user.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 
 import org.chiu.micro.user.convertor.RoleEntityRpcVoConvertor;
@@ -24,7 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -84,15 +81,9 @@ public class RoleServiceImpl implements RoleService {
 
     @SneakyThrows
     @Override
-    public void download(HttpServletResponse response) {
-        ServletOutputStream outputStream = response.getOutputStream();
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-
+    public byte[] download() {
         List<RoleEntity> roles = roleRepository.findAll();
-        byte[] bytes = objectMapper.writeValueAsBytes(roles);
-        outputStream.write(bytes);
-        outputStream.flush();
-        outputStream.close();
+        return objectMapper.writeValueAsBytes(roles);
     }
 
     @Override

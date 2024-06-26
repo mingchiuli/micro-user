@@ -1,6 +1,5 @@
 package org.chiu.micro.user.service;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.chiu.micro.user.req.AuthorityEntityReq;
 import org.chiu.micro.user.vo.AuthorityVo;
 
@@ -16,5 +15,5 @@ public interface AuthorityService {
 
     void deleteAuthorities(List<Long> ids);
 
-    void download(HttpServletResponse response);
+    byte[] download();
 }

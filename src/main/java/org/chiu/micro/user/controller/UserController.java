@@ -1,6 +1,5 @@
 package org.chiu.micro.user.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.chiu.micro.user.req.UserEntityRegisterReq;
 import org.chiu.micro.user.service.UserRoleService;
 import org.chiu.micro.user.service.UserService;
@@ -79,8 +78,8 @@ public class UserController {
     }
 
     @GetMapping("/download")
-    public Result<Void> download(HttpServletResponse response) {
-        userService.download(response);
-        return Result.success();
+    public Result<byte[]> download() {
+        byte[] data = userService.download();
+        return Result.success(data);
     }
 }

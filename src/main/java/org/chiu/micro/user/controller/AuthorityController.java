@@ -43,8 +43,7 @@ public class AuthorityController {
     }
 
     @GetMapping("/download")
-    public Result<byte[]> download() {
-        byte[] data = authorityService.download();
-        return Result.success(data);
+    public byte[] download() {
+        return authorityService.download();
     }
 }

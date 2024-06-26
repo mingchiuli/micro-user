@@ -58,9 +58,8 @@ public class MenuController {
     }
 
     @GetMapping("/download")
-    public Result<byte[]> download() {
-        byte[] data = menuService.download();
-        return Result.success(data);
+    public byte[] download() {
+        return menuService.download();
     }
 
 }

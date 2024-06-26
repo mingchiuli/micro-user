@@ -78,8 +78,7 @@ public class UserController {
     }
 
     @GetMapping("/download")
-    public Result<byte[]> download() {
-        byte[] data = userService.download();
-        return Result.success(data);
+    public byte[] download() {
+        return userService.download();
     }
 }

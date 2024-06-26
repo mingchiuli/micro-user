@@ -78,9 +78,8 @@ public class RoleController {
     }
 
     @GetMapping("/download")
-    public Result<byte[]> download() {
-        byte[] data = roleService.download();
-        return Result.success(data);
+    public byte[] download() {
+        return roleService.download();
     }
 
     @GetMapping("/valid/all")

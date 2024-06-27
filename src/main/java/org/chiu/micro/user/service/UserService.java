@@ -1,7 +1,7 @@
 package org.chiu.micro.user.service;
 
+import org.chiu.micro.user.req.ImgUploadReq;
 import org.chiu.micro.user.vo.UserEntityRpcVo;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +20,7 @@ public interface UserService {
 
     String getRegisterPage(String username);
 
-    String imageUpload(String token, MultipartFile image);
+    String imageUpload(String token, ImgUploadReq req);
 
     void imageDelete(String token, String url);
 

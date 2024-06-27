@@ -9,6 +9,7 @@ import org.chiu.micro.user.convertor.UserEntityRpcVoConvertor;
 import org.chiu.micro.user.entity.UserEntity;
 import org.chiu.micro.user.exception.MissException;
 import org.chiu.micro.user.repository.UserRepository;
+import org.chiu.micro.user.req.ImgUploadReq;
 import org.chiu.micro.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -80,20 +80,20 @@ public class UserServiceImpl implements UserService {
 
     @SneakyThrows
     @Override
-    public String imageUpload(String token, MultipartFile image) {
+    public String imageUpload(String token, ImgUploadReq req) {
         Boolean exist = redisTemplate.hasKey(REGISTER_PREFIX.getInfo() + token);
         if (Objects.isNull(exist) || Boolean.FALSE.equals(exist)) {
             throw new MissException(NO_AUTH.getMsg());
         }
 
-        Assert.notNull(image, UPLOAD_MISS.getMsg());
+        Assert.notNull(req.getData(), UPLOAD_MISS.getMsg());
         String uuid = UUID.randomUUID().toString();
-        String originalFilename = image.getOriginalFilename();
+        String originalFilename = req.getFileName();
         originalFilename = Optional.ofNullable(originalFilename)
                 .orElseGet(() -> UUID.randomUUID().toString())
                 .replace(" ", "");
         String objectName = "avatar/" + uuid + "-" + originalFilename;
-        byte[] imageBytes = image.getBytes();
+        byte[] imageBytes = req.getData();
 
         Map<String, String> headers = new HashMap<>();
         String gmtDate = ossSignUtils.getGMTDate();

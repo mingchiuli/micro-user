@@ -1,5 +1,6 @@
 package org.chiu.micro.user.controller;
 
+import org.chiu.micro.user.req.ImgUploadReq;
 import org.chiu.micro.user.req.UserEntityRegisterReq;
 import org.chiu.micro.user.service.UserRoleService;
 import org.chiu.micro.user.service.UserService;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -45,9 +45,9 @@ public class UserController {
     }
 
     @PostMapping("/register/image/upload")
-    public Result<String> imageUpload(@RequestParam MultipartFile image,
+    public Result<String> imageUpload(@RequestParam ImgUploadReq req,
                                       @RequestParam String token) {
-        return Result.success(() -> userService.imageUpload(token, image));
+        return Result.success(() -> userService.imageUpload(token, req));
     }
 
     @GetMapping("/register/image/delete")

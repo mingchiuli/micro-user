@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping("/register/image/upload")
-    public Result<String> imageUpload(@RequestParam ImgUploadReq req,
+    public Result<String> imageUpload(@RequestBody ImgUploadReq req,
                                       @RequestParam String token) {
         return Result.success(() -> userService.imageUpload(token, req));
     }

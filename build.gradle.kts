@@ -49,7 +49,7 @@ tasks.named<BootBuildImage>("bootBuildImage") {
 		"BP_NATIVE_IMAGE_BUILD_ARGUMENTS" to
 			"""
 				-march=compatibility
-				--gc=serial
+				--gc=epsilon
 				-R:MaxHeapSize=256m
 				-O2
 			""",

@@ -77,7 +77,7 @@ public class UserRoleServiceImpl implements UserRoleService {
             if (StringUtils.hasLength(password)) {
                 userEntityReq.setPassword(passwordEncoder.encode(password));
             } else {
-                userEntityReq.setPassword(password);
+                userEntityReq.setPassword(userEntity.getPassword());
             }
             userOperateEnum = UserOperateEnum.UPDATE;
         } else {

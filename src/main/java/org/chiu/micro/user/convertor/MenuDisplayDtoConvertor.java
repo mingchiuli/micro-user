@@ -2,7 +2,7 @@ package org.chiu.micro.user.convertor;
 
 import org.chiu.micro.user.lang.StatusEnum;
 import org.chiu.micro.user.dto.MenuDisplayDto;
-import org.chiu.micro.user.entity.MenuEntity;
+import org.chiu.micro.user.dto.MenuDto;
 
 import java.util.Comparator;
 import java.util.List;
@@ -13,8 +13,8 @@ public class MenuDisplayDtoConvertor {
 
     private MenuDisplayDtoConvertor() {}
 
-    public static List<MenuDisplayDto> convert(List<MenuEntity> menus, boolean statusCheck) {
-        Stream<MenuEntity> menuStream = menus.stream();
+    public static List<MenuDisplayDto> convert(List<MenuDto> menus, boolean statusCheck) {
+        Stream<MenuDto> menuStream = menus.stream();
         if (Boolean.TRUE.equals(statusCheck)) {
             menuStream = menuStream.filter(menu -> StatusEnum.NORMAL.getCode().equals(menu.getStatus()));
         }
@@ -25,8 +25,6 @@ public class MenuDisplayDtoConvertor {
                         .parentId(menu.getParentId())
                         .icon(menu.getIcon())
                         .url(menu.getUrl())
-                        .updated(menu.getUpdated())
-                        .created(menu.getCreated())
                         .title(menu.getTitle())
                         .name(menu.getName())
                         .component(menu.getComponent())

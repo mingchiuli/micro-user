@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class MenusAndButtonsVo {
 
-    private List<MenuVo> menus;
+    private List<MenuWithChildVo> menus;
 
     private List<ButtonVo> buttons;
 

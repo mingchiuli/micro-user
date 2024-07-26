@@ -2,15 +2,13 @@ package org.chiu.micro.user.wrapper;
 
 import lombok.RequiredArgsConstructor;
 import org.chiu.micro.user.cache.handler.AllMenuAndButtonCacheEvictHandler;
-import org.chiu.micro.user.convertor.ButtonDtoConvertor;
-import org.chiu.micro.user.convertor.MenuDisplayDtoConvertor;
-import org.chiu.micro.user.convertor.MenuDtoConvertor;
 import org.chiu.micro.user.cache.config.Cache;
 import org.chiu.micro.user.cache.CacheEvict;
 import org.chiu.micro.user.lang.Const;
 import org.chiu.micro.user.cache.handler.MenuAndButtonCacheEvictHandler;
+import org.chiu.micro.user.convertor.ButtonDtoConvertor;
+import org.chiu.micro.user.convertor.MenuDtoConvertor;
 import org.chiu.micro.user.dto.ButtonDto;
-import org.chiu.micro.user.dto.MenuDisplayDto;
 import org.chiu.micro.user.dto.MenuDto;
 import org.chiu.micro.user.dto.MenusAndButtonsDto;
 import org.chiu.micro.user.entity.MenuEntity;
@@ -76,10 +74,9 @@ public class RoleMenuWrapper {
                 .filter(menu -> BUTTON.getCode().equals(menu.getType()))
                 .toList();
 
-        List<MenuDisplayDto> menuEntities = MenuDisplayDtoConvertor.convert(menus, true);
-        List<MenuDisplayDto> displayDtos = MenuDisplayDtoConvertor.buildTreeMenu(menuEntities);
-        List<MenuDto> menuDtos = MenuDtoConvertor.convert(displayDtos);
-        List<ButtonDto> buttonDtos = ButtonDtoConvertor.convert(buttons, true);
+        List<MenuDto> menuDtos = MenuDtoConvertor.convert(menus);
+        List<ButtonDto> buttonDtos = ButtonDtoConvertor.convert(buttons);
+        
         return MenusAndButtonsDto.builder()
                 .buttons(buttonDtos)
                 .menus(menuDtos)

@@ -1,12 +1,18 @@
 package org.chiu.micro.user.service.impl;
 
 import org.chiu.micro.user.exception.CommitException;
+import org.chiu.micro.user.convertor.ButtonDtoConvertor;
+import org.chiu.micro.user.convertor.MenuDisplayDtoConvertor;
 import org.chiu.micro.user.convertor.MenuDisplayVoConvertor;
-import org.chiu.micro.user.convertor.MenusAndButtonsVoConvertor;
+import org.chiu.micro.user.convertor.MenuWithChildConvertor;
+import org.chiu.micro.user.convertor.MenusWithChildAndButtonsVoConvertor;
 import org.chiu.micro.user.convertor.RoleMenuEntityConvertor;
 import org.chiu.micro.user.dto.ButtonDto;
+import org.chiu.micro.user.dto.MenuDisplayDto;
 import org.chiu.micro.user.dto.MenuDto;
+import org.chiu.micro.user.dto.MenuWithChildDto;
 import org.chiu.micro.user.dto.MenusAndButtonsDto;
+import org.chiu.micro.user.dto.MenusWithChildAndButtonsDto;
 import org.chiu.micro.user.entity.MenuEntity;
 import org.chiu.micro.user.entity.RoleMenuEntity;
 import org.chiu.micro.user.repository.MenuRepository;
@@ -63,19 +69,24 @@ public class RoleMenuServiceImpl implements RoleMenuService {
     public MenusAndButtonsVo getCurrentUserNav(List<String> roles) {
         List<MenuDto> allMenus = new ArrayList<>();
         List<ButtonDto> allButtons = new ArrayList<>();
-        roles.forEach(role -> {
+
+        for (String role : roles) {
             MenusAndButtonsDto menusAndButtonsDto = roleMenuWrapper.getCurrentRoleNav(role);
             allMenus.addAll(menusAndButtonsDto.getMenus());
             allButtons.addAll(menusAndButtonsDto.getButtons());
-        });
+        }
 
-        return MenusAndButtonsVoConvertor.convertor(MenusAndButtonsDto.builder()
-                .buttons(allButtons.stream()
-                        .distinct()
-                        .toList())
-                .menus(allMenus.stream()
-                        .distinct()
-                        .toList())
+        allMenus = allMenus.stream().distinct().toList();
+        allButtons = allButtons.stream().distinct().toList();
+
+        List<MenuDisplayDto> menuEntities = MenuDisplayDtoConvertor.convert(allMenus, true);
+        List<MenuDisplayDto> displayDtos = MenuDisplayDtoConvertor.buildTreeMenu(menuEntities);
+        List<MenuWithChildDto> menuDtos = MenuWithChildConvertor.convert(displayDtos);
+        List<ButtonDto> buttonDtos = ButtonDtoConvertor.convert(allButtons, true);
+
+        return MenusWithChildAndButtonsVoConvertor.convert(MenusWithChildAndButtonsDto.builder()
+                .buttons(buttonDtos)
+                .menus(menuDtos)
                 .build());
     }
 

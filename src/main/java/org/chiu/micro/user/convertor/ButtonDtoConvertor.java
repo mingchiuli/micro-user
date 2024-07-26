@@ -13,27 +13,31 @@ import java.util.stream.Stream;
  **/
 public class ButtonDtoConvertor {
 
-    private ButtonDtoConvertor() {}
+    private ButtonDtoConvertor() {
+    }
 
-
-    public static List<ButtonDto> convert(List<MenuEntity> buttons, Boolean statusCheck) {
-        Stream<MenuEntity> buttonStream = buttons.stream();
+    public static List<ButtonDto> convert(List<ButtonDto> buttons, Boolean statusCheck) {
+        Stream<ButtonDto> buttonStream = buttons.stream();
         if (Boolean.TRUE.equals(statusCheck)) {
             buttonStream = buttonStream.filter(menu -> StatusEnum.NORMAL.getCode().equals(menu.getStatus()));
         }
 
-        return buttonStream
-                .map(menu -> ButtonDto.builder()
-                        .menuId(menu.getMenuId())
-                        .parentId(menu.getParentId())
-                        .icon(menu.getIcon())
-                        .url(menu.getUrl())
-                        .title(menu.getTitle())
-                        .name(menu.getName())
-                        .component(menu.getComponent())
-                        .type(menu.getType())
-                        .orderNum(menu.getOrderNum())
-                        .status(menu.getStatus())
+        return buttonStream.toList();
+    }
+
+    public static List<ButtonDto> convert(List<MenuEntity> buttons) {
+        return buttons.stream()
+                .map(item -> ButtonDto.builder()
+                        .menuId(item.getMenuId())
+                        .name(item.getName())
+                        .icon(item.getIcon())
+                        .component(item.getComponent())
+                        .orderNum(item.getOrderNum())
+                        .status(item.getStatus())
+                        .parentId(item.getParentId())
+                        .url(item.getUrl())
+                        .title(item.getTitle())
+                        .type(item.getType())
                         .build())
                 .toList();
     }

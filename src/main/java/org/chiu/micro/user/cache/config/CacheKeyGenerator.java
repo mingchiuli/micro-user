@@ -3,6 +3,8 @@ package org.chiu.micro.user.cache.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+
+import org.chiu.micro.user.cache.Cache;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 

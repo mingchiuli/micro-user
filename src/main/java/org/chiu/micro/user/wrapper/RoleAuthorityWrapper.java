@@ -1,7 +1,7 @@
 package org.chiu.micro.user.wrapper;
 
 import lombok.RequiredArgsConstructor;
-import org.chiu.micro.user.cache.config.Cache;
+
 import org.chiu.micro.user.lang.Const;
 import org.chiu.micro.user.entity.AuthorityEntity;
 import org.chiu.micro.user.entity.RoleAuthorityEntity;
@@ -9,6 +9,7 @@ import org.chiu.micro.user.entity.RoleEntity;
 import org.chiu.micro.user.repository.AuthorityRepository;
 import org.chiu.micro.user.repository.RoleAuthorityRepository;
 import org.chiu.micro.user.repository.RoleRepository;
+import org.chiu.micro.user.cache.Cache;
 import org.chiu.micro.user.cache.CacheEvict;
 import org.chiu.micro.user.cache.handler.AuthorityCacheEvictHandler;
 import org.springframework.stereotype.Component;

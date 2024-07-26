@@ -16,10 +16,9 @@ public class MenuWithChildConvertor {
         .menuId(item.getMenuId())
         .icon(item.getIcon())
         .name(item.getName())
-        .status(item.getStatus())
         .title(item.getTitle())
         .status(item.getStatus())
-        .title(item.getTitle())
+        .component(item.getComponent())
         .url(item.getUrl())
         .parentId(item.getParentId())
         .orderNum(item.getOrderNum())
@@ -40,6 +39,7 @@ public class MenuWithChildConvertor {
         .parentId(displayDto.getParentId())
         .orderNum(displayDto.getOrderNum())
         .type(displayDto.getType())
+        .component(displayDto.getComponent())
         .children(convert(displayDto.getChildren()))
         .build();
   }

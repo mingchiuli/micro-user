@@ -1,4 +1,4 @@
-package org.chiu.micro.user.cache.config;
+package org.chiu.micro.user.cache;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +9,7 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.chiu.micro.user.cache.config.CacheKeyGenerator;
 import org.chiu.micro.user.utils.ClassUtils;
 import org.redisson.api.*;
 import org.springframework.core.NestedRuntimeException;
@@ -45,7 +46,7 @@ public class CacheAspect {
 
     private final com.github.benmanes.caffeine.cache.Cache<String, Object> localCache;
 
-    @Pointcut("@annotation(org.chiu.megalith.infra.cache.Cache)")
+    @Pointcut("@annotation(org.chiu.micro.user.cache.Cache)")
     public void pt() {
     }
 
@@ -114,7 +115,8 @@ public class CacheAspect {
             Object proceed = pjp.proceed();
 
             Cache annotation = method.getAnnotation(Cache.class);
-            redisTemplate.opsForValue().set(cacheKey, objectMapper.writeValueAsString(proceed), annotation.expire(), TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set(cacheKey, objectMapper.writeValueAsString(proceed), annotation.expire(),
+                    TimeUnit.MINUTES);
             localCache.put(cacheKey, proceed);
             return proceed;
         } finally {

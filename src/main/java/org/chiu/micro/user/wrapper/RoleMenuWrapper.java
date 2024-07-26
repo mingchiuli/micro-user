@@ -2,7 +2,7 @@ package org.chiu.micro.user.wrapper;
 
 import lombok.RequiredArgsConstructor;
 import org.chiu.micro.user.cache.handler.AllMenuAndButtonCacheEvictHandler;
-import org.chiu.micro.user.cache.config.Cache;
+import org.chiu.micro.user.cache.Cache;
 import org.chiu.micro.user.cache.CacheEvict;
 import org.chiu.micro.user.lang.Const;
 import org.chiu.micro.user.cache.handler.MenuAndButtonCacheEvictHandler;

@@ -1,11 +1,12 @@
-package org.chiu.micro.user.event;
+package org.chiu.micro.user.constant;
 
 
 import java.io.Serializable;
 
+import org.chiu.micro.user.lang.UserOperateEnum;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.chiu.micro.user.constant.UserOperateEnum;
 
 @Data
 @AllArgsConstructor

@@ -3,16 +3,16 @@ package org.chiu.micro.user.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 
-import org.chiu.micro.user.constant.UserAuthMenuOperateMessage;
+import org.chiu.micro.user.constant.AuthMenuIndexMessage;
 import org.chiu.micro.user.convertor.RoleEntityRpcVoConvertor;
 import org.chiu.micro.user.convertor.RoleEntityVoConvertor;
 import org.chiu.micro.user.entity.RoleEntity;
+import org.chiu.micro.user.event.AuthMenuOperateEvent;
 import org.chiu.micro.user.repository.RoleRepository;
 import org.chiu.micro.user.service.RoleService;
 import org.chiu.micro.user.req.RoleEntityReq;
 import org.chiu.micro.user.exception.MissException;
 import org.chiu.micro.user.lang.AuthMenuOperateEnum;
-import org.chiu.micro.user.lang.Const;
 import org.chiu.micro.user.lang.StatusEnum;
 import org.chiu.micro.user.page.PageAdapter;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.chiu.micro.user.vo.RoleEntityRpcVo;
 import org.chiu.micro.user.vo.RoleEntityVo;
 import org.chiu.micro.user.wrapper.RoleMenuAuthorityWrapper;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -47,7 +47,7 @@ public class RoleServiceImpl implements RoleService {
 
     private final RoleMenuAuthorityWrapper roleMenuAuthorityWrapper;
 
-    private final RabbitTemplate rabbitTemplate;
+    private final ApplicationContext applicationContext;
 
     @Override
     public RoleEntityVo info(Long id) {
@@ -83,11 +83,8 @@ public class RoleServiceImpl implements RoleService {
         BeanUtils.copyProperties(roleReq, roleEntity);
         roleRepository.save(roleEntity);
         //权限和按钮
-        var data = UserAuthMenuOperateMessage.builder()
-                .roles(Collections.singletonList(roleEntity.getCode()))
-                .type(AuthMenuOperateEnum.AUTH_AND_MENU.getType())
-                .build();
-        rabbitTemplate.convertAndSend(Const.CACHE_USER_EVICT_EXCHANGE.getInfo(), Const.CACHE_USER_EVICT_BINDING_KEY.getInfo(), data);
+        var authMenuIndexMessage = new AuthMenuIndexMessage(Collections.singletonList(roleEntity.getCode()), AuthMenuOperateEnum.AUTH_AND_MENU.getType());
+        applicationContext.publishEvent(new AuthMenuOperateEvent(this, authMenuIndexMessage));
     }
 
     @Override
@@ -100,11 +97,8 @@ public class RoleServiceImpl implements RoleService {
                 .distinct()
                 .toList();
 
-        var data = UserAuthMenuOperateMessage.builder()
-                .roles(roles)
-                .type(AuthMenuOperateEnum.AUTH_AND_MENU.getType())
-                .build();
-        rabbitTemplate.convertAndSend(Const.CACHE_USER_EVICT_EXCHANGE.getInfo(), Const.CACHE_USER_EVICT_BINDING_KEY.getInfo(), data);
+        var authMenuIndexMessage = new AuthMenuIndexMessage(roles, AuthMenuOperateEnum.AUTH_AND_MENU.getType());
+        applicationContext.publishEvent(new AuthMenuOperateEvent(this, authMenuIndexMessage));        
     }
 
     @SneakyThrows

@@ -3,6 +3,7 @@ package org.chiu.micro.user.event;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.chiu.micro.user.constant.UserIndexMessage;
 import org.springframework.context.ApplicationEvent;
 
 @Getter

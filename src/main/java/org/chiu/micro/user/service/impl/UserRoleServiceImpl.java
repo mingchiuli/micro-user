@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 
 import org.chiu.micro.user.exception.CommitException;
 import org.chiu.micro.user.exception.MissException;
+import org.chiu.micro.user.lang.UserOperateEnum;
 import org.chiu.micro.user.page.PageAdapter;
 import org.chiu.micro.user.code.CodeFactory;
-import org.chiu.micro.user.constant.UserOperateEnum;
+import org.chiu.micro.user.constant.UserIndexMessage;
 import org.chiu.micro.user.convertor.UserEntityVoConvertor;
 import org.chiu.micro.user.entity.RoleEntity;
 import org.chiu.micro.user.entity.UserEntity;
 import org.chiu.micro.user.entity.UserRoleEntity;
-import org.chiu.micro.user.event.UserIndexMessage;
 import org.chiu.micro.user.event.UserOperateEvent;
 import org.chiu.micro.user.repository.RoleRepository;
 import org.chiu.micro.user.repository.UserRepository;

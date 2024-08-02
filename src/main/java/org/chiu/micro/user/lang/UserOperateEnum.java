@@ -1,4 +1,4 @@
-package org.chiu.micro.user.constant;
+package org.chiu.micro.user.lang;
 
 /**
  * @author mingchiuli

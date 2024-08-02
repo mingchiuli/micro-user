@@ -2,8 +2,7 @@ package org.chiu.micro.user.service.impl;
 
 import org.chiu.micro.user.exception.CommitException;
 import org.chiu.micro.user.lang.AuthMenuOperateEnum;
-import org.chiu.micro.user.lang.Const;
-import org.chiu.micro.user.constant.UserAuthMenuOperateMessage;
+import org.chiu.micro.user.constant.AuthMenuIndexMessage;
 import org.chiu.micro.user.convertor.ButtonDtoConvertor;
 import org.chiu.micro.user.convertor.MenuDisplayDtoConvertor;
 import org.chiu.micro.user.convertor.MenuDisplayVoConvertor;
@@ -20,6 +19,7 @@ import org.chiu.micro.user.dto.MenusWithChildAndButtonsDto;
 import org.chiu.micro.user.entity.MenuEntity;
 import org.chiu.micro.user.entity.RoleEntity;
 import org.chiu.micro.user.entity.RoleMenuEntity;
+import org.chiu.micro.user.event.AuthMenuOperateEvent;
 import org.chiu.micro.user.repository.MenuRepository;
 import org.chiu.micro.user.repository.RoleMenuRepository;
 import org.chiu.micro.user.repository.RoleRepository;
@@ -28,7 +28,7 @@ import org.chiu.micro.user.vo.*;
 
 import lombok.RequiredArgsConstructor;
 import org.chiu.micro.user.wrapper.RoleMenuWrapper;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class RoleMenuServiceImpl implements RoleMenuService {
 
     private final RoleRepository roleRepository;
 
-    private final RabbitTemplate rabbitTemplate;
+    private final ApplicationContext applicationContext;
 
     private List<RoleMenuVo> setCheckMenusInfo(List<MenuDisplayVo> menusInfo, List<Long> menuIdsByRole, List<RoleMenuVo> parentChildren) {
         menusInfo.forEach(item -> {
@@ -115,11 +115,8 @@ public class RoleMenuServiceImpl implements RoleMenuService {
         roleRepository.findById(roleId)
                 .map(RoleEntity::getCode)
                 .ifPresent(role -> {
-                    var data = UserAuthMenuOperateMessage.builder()
-                            .roles(Collections.singletonList(role))
-                            .type(AuthMenuOperateEnum.MENU.getType())
-                            .build();
-                    rabbitTemplate.convertAndSend(Const.CACHE_USER_EVICT_EXCHANGE.getInfo(), Const.CACHE_USER_EVICT_BINDING_KEY.getInfo(), data);
+                    var authMenuIndexMessage = new AuthMenuIndexMessage(Collections.singletonList(role), AuthMenuOperateEnum.MENU.getType());
+                    applicationContext.publishEvent(new AuthMenuOperateEvent(this, authMenuIndexMessage));
                 });
 
     }
@@ -145,11 +142,8 @@ public class RoleMenuServiceImpl implements RoleMenuService {
         roleMenuWrapper.deleteMenu(id);
         //全部按钮
         List<String> allRoleCodes = roleRepository.findAllCodes();
-        var data = UserAuthMenuOperateMessage.builder()
-                .roles(allRoleCodes)
-                .type(AuthMenuOperateEnum.MENU.getType())
-                .build();
-        rabbitTemplate.convertAndSend(Const.CACHE_USER_EVICT_EXCHANGE.getInfo(), Const.CACHE_USER_EVICT_BINDING_KEY.getInfo(), data);
+        var authMenuIndexMessage = new AuthMenuIndexMessage(allRoleCodes, AuthMenuOperateEnum.MENU.getType());
+        applicationContext.publishEvent(new AuthMenuOperateEvent(this, authMenuIndexMessage));
     }
 
     private MenusAndButtonsDto getCurrentRoleNav(String role) {

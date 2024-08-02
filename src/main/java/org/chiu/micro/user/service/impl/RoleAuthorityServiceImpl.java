@@ -2,20 +2,20 @@ package org.chiu.micro.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 
-import org.chiu.micro.user.constant.UserAuthMenuOperateMessage;
+import org.chiu.micro.user.constant.AuthMenuIndexMessage;
 import org.chiu.micro.user.convertor.RoleAuthorityEntityConvertor;
 import org.chiu.micro.user.entity.AuthorityEntity;
 import org.chiu.micro.user.entity.RoleAuthorityEntity;
 import org.chiu.micro.user.entity.RoleEntity;
+import org.chiu.micro.user.event.AuthMenuOperateEvent;
 import org.chiu.micro.user.lang.AuthMenuOperateEnum;
-import org.chiu.micro.user.lang.Const;
 import org.chiu.micro.user.repository.AuthorityRepository;
 import org.chiu.micro.user.repository.RoleAuthorityRepository;
 import org.chiu.micro.user.repository.RoleRepository;
 import org.chiu.micro.user.service.RoleAuthorityService;
 import org.chiu.micro.user.vo.RoleAuthorityVo;
 import org.chiu.micro.user.wrapper.RoleAuthorityWrapper;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class RoleAuthorityServiceImpl implements RoleAuthorityService {
 
     private final RoleRepository roleRepository;
 
-    private final RabbitTemplate rabbitTemplate;
+    private final ApplicationContext applicationContext;
 
     @Override
     public List<String> getAuthoritiesByRoleCodes(String roleCode) {
@@ -56,11 +56,8 @@ public class RoleAuthorityServiceImpl implements RoleAuthorityService {
         roleRepository.findById(roleId)
                 .map(RoleEntity::getCode)
                 .ifPresent(role -> {
-                    var data = UserAuthMenuOperateMessage.builder()
-                            .roles(Collections.singletonList(role))
-                            .type(AuthMenuOperateEnum.AUTH.getType())
-                            .build();
-                    rabbitTemplate.convertAndSend(Const.CACHE_USER_EVICT_EXCHANGE.getInfo(), Const.CACHE_USER_EVICT_BINDING_KEY.getInfo(), data);
+                    var authMenuIndexMessage = new AuthMenuIndexMessage(Collections.singletonList(role), AuthMenuOperateEnum.AUTH.getType());
+                    applicationContext.publishEvent(new AuthMenuOperateEvent(this, authMenuIndexMessage));
                 });
     }
 

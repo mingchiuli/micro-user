@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface RoleMenuService {
 
-    MenusAndButtonsVo getCurrentUserNav(List<String> roles);
+    MenusAndButtonsVo getCurrentUserNav(String roles);
 
     List<RoleMenuVo> getMenusInfo(Long roleId);
 

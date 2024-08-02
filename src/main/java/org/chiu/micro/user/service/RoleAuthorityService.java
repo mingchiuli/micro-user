@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface RoleAuthorityService {
 
-    List<String> getAuthoritiesByRoleCodes(List<String> roleCodes);
+    List<String> getAuthoritiesByRoleCodes(String roleCode);
 
     List<RoleAuthorityVo> getAuthoritiesInfo(Long roleId);
 

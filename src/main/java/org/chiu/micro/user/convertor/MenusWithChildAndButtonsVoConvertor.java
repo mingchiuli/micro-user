@@ -12,66 +12,48 @@ import org.chiu.micro.user.vo.MenusAndButtonsVo;
 
 public class MenusWithChildAndButtonsVoConvertor {
 
-  private MenusWithChildAndButtonsVoConvertor() {
-  }
+	private MenusWithChildAndButtonsVoConvertor() {
+	}
 
-  public static MenusAndButtonsVo convert(MenusWithChildAndButtonsDto dto) {
-    List<ButtonDto> buttons = dto.getButtons();
-    List<MenuWithChildDto> menus = dto.getMenus();
+	public static MenusAndButtonsVo convert(MenusWithChildAndButtonsDto dto) {
+		List<ButtonDto> buttons = dto.getButtons();
+		List<MenuWithChildDto> menus = dto.getMenus();
 
-    List<ButtonVo> buttonVos = new ArrayList<>();
-    List<MenuWithChildVo> menuVos = new ArrayList<>();
+		List<ButtonVo> buttonVos = new ArrayList<>();
+		List<MenuWithChildVo> menuVos = new ArrayList<>();
 
-    buttons.forEach(button -> buttonVos.add(ButtonVo.builder()
-        .menuId(button.getMenuId())
-        .parentId(button.getParentId())
-        .icon(button.getIcon())
-        .url(button.getUrl())
-        .title(button.getTitle())
-        .name(button.getName())
-        .component(button.getComponent())
-        .type(button.getType())
-        .orderNum(button.getOrderNum())
-        .status(button.getStatus())
-        .build()));
+		buttons.forEach(button -> buttonVos.add(ButtonVo.builder()
+				.menuId(button.getMenuId())
+				.parentId(button.getParentId())
+				.icon(button.getIcon())
+				.url(button.getUrl())
+				.title(button.getTitle())
+				.name(button.getName())
+				.component(button.getComponent())
+				.type(button.getType())
+				.orderNum(button.getOrderNum())
+				.status(button.getStatus())
+				.build()));
 
-    menus.forEach(menu -> menuVos.add(MenuWithChildVo.builder()
-        .menuId(menu.getMenuId())
-        .parentId(menu.getParentId())
-        .icon(menu.getIcon())
-        .url(menu.getUrl())
-        .title(menu.getTitle())
-        .name(menu.getName())
-        .component(menu.getComponent())
-        .type(menu.getType())
-        .orderNum(menu.getOrderNum())
-        .status(menu.getStatus())
-        .children(convert(menu.getChildren()))
-        .build()));
+		menus.forEach(menu -> menuVos.add(MenuWithChildVo.builder()
+				.menuId(menu.getMenuId())
+				.parentId(menu.getParentId())
+				.icon(menu.getIcon())
+				.url(menu.getUrl())
+				.title(menu.getTitle())
+				.name(menu.getName())
+				.component(menu.getComponent())
+				.type(menu.getType())
+				.orderNum(menu.getOrderNum())
+				.status(menu.getStatus())
+				.children(MenuWithChildVoConvertor.convert(menu.getChildren()))
+				.build()));
 
-    return MenusAndButtonsVo.builder()
-        .buttons(buttonVos)
-        .menus(menuVos)
-        .build();
+		return MenusAndButtonsVo.builder()
+				.buttons(buttonVos)
+				.menus(menuVos)
+				.build();
 
-  }
-
-  private static List<MenuWithChildVo> convert(List<MenuWithChildDto> menuVos) {
-    return menuVos.stream()
-        .map(menu -> MenuWithChildVo.builder()
-            .menuId(menu.getMenuId())
-            .parentId(menu.getParentId())
-            .icon(menu.getIcon())
-            .url(menu.getUrl())
-            .title(menu.getTitle())
-            .name(menu.getName())
-            .component(menu.getComponent())
-            .type(menu.getType())
-            .orderNum(menu.getOrderNum())
-            .status(menu.getStatus())
-            .children(convert(menu.getChildren()))
-            .build())
-        .toList();
-  }
+	}
 
 }

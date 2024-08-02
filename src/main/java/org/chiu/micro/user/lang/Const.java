@@ -13,19 +13,18 @@ public enum Const {
 
     ROLE_PREFIX("ROLE_"),
 
-    HOT_AUTHORITIES("hot_authorities"),
-
-    HOT_MENUS_AND_BUTTONS("hot_menus_and_buttons"),
-
     BLOCK_USER("block_user:"),
 
     REGISTER_PREFIX("register_prefix:"),
 
-    USER("user");
-
-
+    USER("user"),
+    
+    CACHE_EVICT_FANOUT_EXCHANGE("cache.user.evict.fanout.exchange"),
+    
+    CACHE_USER_EVICT_EXCHANGE("cache.user.direct.exchange"),
+    
+    CACHE_USER_EVICT_BINDING_KEY("cache.user.evict.binding");
 
     private final String info;
-
 }
 

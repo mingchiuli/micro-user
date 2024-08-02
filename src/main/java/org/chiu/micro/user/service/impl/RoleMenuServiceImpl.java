@@ -1,10 +1,14 @@
 package org.chiu.micro.user.service.impl;
 
 import org.chiu.micro.user.exception.CommitException;
+import org.chiu.micro.user.lang.AuthMenuOperateEnum;
+import org.chiu.micro.user.lang.Const;
+import org.chiu.micro.user.constant.UserAuthMenuOperateMessage;
 import org.chiu.micro.user.convertor.ButtonDtoConvertor;
 import org.chiu.micro.user.convertor.MenuDisplayDtoConvertor;
 import org.chiu.micro.user.convertor.MenuDisplayVoConvertor;
-import org.chiu.micro.user.convertor.MenuWithChildConvertor;
+import org.chiu.micro.user.convertor.MenuDtoConvertor;
+import org.chiu.micro.user.convertor.MenuWithChildDtoConvertor;
 import org.chiu.micro.user.convertor.MenusWithChildAndButtonsVoConvertor;
 import org.chiu.micro.user.convertor.RoleMenuEntityConvertor;
 import org.chiu.micro.user.dto.ButtonDto;
@@ -14,21 +18,30 @@ import org.chiu.micro.user.dto.MenuWithChildDto;
 import org.chiu.micro.user.dto.MenusAndButtonsDto;
 import org.chiu.micro.user.dto.MenusWithChildAndButtonsDto;
 import org.chiu.micro.user.entity.MenuEntity;
+import org.chiu.micro.user.entity.RoleEntity;
 import org.chiu.micro.user.entity.RoleMenuEntity;
 import org.chiu.micro.user.repository.MenuRepository;
 import org.chiu.micro.user.repository.RoleMenuRepository;
+import org.chiu.micro.user.repository.RoleRepository;
 import org.chiu.micro.user.service.RoleMenuService;
 import org.chiu.micro.user.vo.*;
 
 import lombok.RequiredArgsConstructor;
 import org.chiu.micro.user.wrapper.RoleMenuWrapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.chiu.micro.user.lang.ExceptionMessage.MENU_INVALID_OPERATE;
 import static org.chiu.micro.user.convertor.MenuDisplayVoConvertor.buildTreeMenu;
+
+import java.util.Optional;
+
+import static org.chiu.micro.user.lang.StatusEnum.NORMAL;
+import static org.chiu.micro.user.lang.TypeEnum.*;
 
 /**
  * @author mingchiuli
@@ -43,6 +56,10 @@ public class RoleMenuServiceImpl implements RoleMenuService {
     private final RoleMenuRepository roleMenuRepository;
 
     private final RoleMenuWrapper roleMenuWrapper;
+
+    private final RoleRepository roleRepository;
+
+    private final RabbitTemplate rabbitTemplate;
 
     private List<RoleMenuVo> setCheckMenusInfo(List<MenuDisplayVo> menusInfo, List<Long> menuIdsByRole, List<RoleMenuVo> parentChildren) {
         menusInfo.forEach(item -> {
@@ -66,23 +83,16 @@ public class RoleMenuServiceImpl implements RoleMenuService {
     }
 
     @Override
-    public MenusAndButtonsVo getCurrentUserNav(List<String> roles) {
-        List<MenuDto> allMenus = new ArrayList<>();
-        List<ButtonDto> allButtons = new ArrayList<>();
+    public MenusAndButtonsVo getCurrentUserNav(String role) {
+    
+        MenusAndButtonsDto menusAndButtonsDto = getCurrentRoleNav(role);
+        List<MenuDto> menus = menusAndButtonsDto.getMenus();
+        List<ButtonDto> buttons = menusAndButtonsDto.getButtons();
 
-        for (String role : roles) {
-            MenusAndButtonsDto menusAndButtonsDto = roleMenuWrapper.getCurrentRoleNav(role);
-            allMenus.addAll(menusAndButtonsDto.getMenus());
-            allButtons.addAll(menusAndButtonsDto.getButtons());
-        }
-
-        allMenus = allMenus.stream().distinct().toList();
-        allButtons = allButtons.stream().distinct().toList();
-
-        List<MenuDisplayDto> menuEntities = MenuDisplayDtoConvertor.convert(allMenus, true);
+        List<MenuDisplayDto> menuEntities = MenuDisplayDtoConvertor.convert(menus, true);
         List<MenuDisplayDto> displayDtos = MenuDisplayDtoConvertor.buildTreeMenu(menuEntities);
-        List<MenuWithChildDto> menuDtos = MenuWithChildConvertor.convert(displayDtos);
-        List<ButtonDto> buttonDtos = ButtonDtoConvertor.convert(allButtons, true);
+        List<MenuWithChildDto> menuDtos = MenuWithChildDtoConvertor.convert(displayDtos);
+        List<ButtonDto> buttonDtos = ButtonDtoConvertor.convert(buttons, true);
 
         return MenusWithChildAndButtonsVoConvertor.convert(MenusWithChildAndButtonsDto.builder()
                 .buttons(buttonDtos)
@@ -99,7 +109,19 @@ public class RoleMenuServiceImpl implements RoleMenuService {
     @Override
     public void saveMenu(Long roleId, List<Long> menuIds) {
         List<RoleMenuEntity> roleMenuEntities = RoleMenuEntityConvertor.convert(roleId, menuIds);
+
         roleMenuWrapper.saveMenu(roleId, new ArrayList<>(roleMenuEntities));
+        // 按钮
+        roleRepository.findById(roleId)
+                .map(RoleEntity::getCode)
+                .ifPresent(role -> {
+                    var data = UserAuthMenuOperateMessage.builder()
+                            .roles(Collections.singletonList(role))
+                            .type(AuthMenuOperateEnum.MENU.getType())
+                            .build();
+                    rabbitTemplate.convertAndSend(Const.CACHE_USER_EVICT_EXCHANGE.getInfo(), Const.CACHE_USER_EVICT_BINDING_KEY.getInfo(), data);
+                });
+
     }
 
     public List<MenuDisplayVo> getNormalMenusInfo() {
@@ -121,5 +143,48 @@ public class RoleMenuServiceImpl implements RoleMenuService {
             throw new CommitException(MENU_INVALID_OPERATE);
         }
         roleMenuWrapper.deleteMenu(id);
+        //全部按钮
+        List<String> allRoleCodes = roleRepository.findAllCodes();
+        var data = UserAuthMenuOperateMessage.builder()
+                .roles(allRoleCodes)
+                .type(AuthMenuOperateEnum.MENU.getType())
+                .build();
+        rabbitTemplate.convertAndSend(Const.CACHE_USER_EVICT_EXCHANGE.getInfo(), Const.CACHE_USER_EVICT_BINDING_KEY.getInfo(), data);
+    }
+
+    private MenusAndButtonsDto getCurrentRoleNav(String role) {
+
+        Optional<RoleEntity> roleEntityOptional = roleRepository.findByCodeAndStatus(role, NORMAL.getCode());
+
+        if (roleEntityOptional.isEmpty()) {
+            return MenusAndButtonsDto.builder()
+                    .menus(Collections.emptyList())
+                    .buttons(Collections.emptyList())
+                    .build();
+        }
+
+        RoleEntity roleEntity = roleEntityOptional.get();
+
+        List<Long> menuIds = roleMenuRepository.findMenuIdsByRoleId(roleEntity.getId());
+
+        List<MenuEntity> allKindsInfo = menuRepository.findAllById(menuIds);
+
+        List<MenuEntity> menus = allKindsInfo
+                .stream()
+                .filter(menu -> CATALOGUE.getCode().equals(menu.getType()) || MENU.getCode().equals(menu.getType()))
+                .toList();
+
+        List<MenuEntity> buttons = allKindsInfo
+                .stream()
+                .filter(menu -> BUTTON.getCode().equals(menu.getType()))
+                .toList();
+
+        List<MenuDto> menuDtos = MenuDtoConvertor.convert(menus);
+        List<ButtonDto> buttonDtos = ButtonDtoConvertor.convert(buttons);
+
+        return MenusAndButtonsDto.builder()
+                .buttons(buttonDtos)
+                .menus(menuDtos)
+                .build();
     }
 }

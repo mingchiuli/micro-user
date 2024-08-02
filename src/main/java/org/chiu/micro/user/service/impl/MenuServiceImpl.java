@@ -2,19 +2,24 @@ package org.chiu.micro.user.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+
+import org.chiu.micro.user.lang.AuthMenuOperateEnum;
+import org.chiu.micro.user.lang.Const;
 import org.chiu.micro.user.lang.StatusEnum;
+import org.chiu.micro.user.constant.UserAuthMenuOperateMessage;
 import org.chiu.micro.user.convertor.MenuDisplayVoConvertor;
 import org.chiu.micro.user.convertor.MenuEntityConvertor;
 import org.chiu.micro.user.convertor.MenuEntityVoConvertor;
 import org.chiu.micro.user.entity.MenuEntity;
 import org.chiu.micro.user.repository.MenuRepository;
+import org.chiu.micro.user.repository.RoleRepository;
 import org.chiu.micro.user.service.MenuService;
 import org.chiu.micro.user.req.MenuEntityReq;
 import org.chiu.micro.user.exception.MissException;
 import lombok.RequiredArgsConstructor;
 import org.chiu.micro.user.vo.MenuDisplayVo;
 import org.chiu.micro.user.vo.MenuEntityVo;
-import org.chiu.micro.user.wrapper.MenuWrapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +39,11 @@ public class MenuServiceImpl implements MenuService {
 
     private final MenuRepository menuRepository;
 
-    private final MenuWrapper menuWrapper;
-
     private final ObjectMapper objectMapper;
+
+    private final RoleRepository roleRepository;
+
+    private final RabbitTemplate rabbitTemplate;
 
     @Override
     public MenuEntityVo findById(Long id) {
@@ -59,21 +66,28 @@ public class MenuServiceImpl implements MenuService {
         }
 
         BeanUtils.copyProperties(menu, menuEntity);
-        
+
         if (StatusEnum.HIDE.getCode().equals(menu.getStatus())) {
             List<MenuEntity> menuEntities = new ArrayList<>();
             menuEntities.add(menuEntity);
             findTargetChildrenMenuId(menuId, menuEntities);
-            menuWrapper.saveAll(menuEntities);
-            return;
+            menuRepository.saveAll(menuEntities);
+        } else {
+            menuRepository.save(menuEntity);
         }
-
-        menuWrapper.save(menuEntity);
+        
+        // 全部按钮和菜单
+        List<String> allRoleCodes = roleRepository.findAllCodes();
+        var data = UserAuthMenuOperateMessage.builder()
+                .roles(allRoleCodes)
+                .type(AuthMenuOperateEnum.MENU.getType())
+                .build();
+        rabbitTemplate.convertAndSend(Const.CACHE_USER_EVICT_EXCHANGE.getInfo(), Const.CACHE_USER_EVICT_BINDING_KEY.getInfo(), data);
     }
 
     @Override
     public List<MenuDisplayVo> tree() {
-        List<MenuEntity> menus =  menuRepository.findAllByOrderByOrderNumDesc();
+        List<MenuEntity> menus = menuRepository.findAllByOrderByOrderNumDesc();
         List<MenuDisplayVo> menuEntities = MenuDisplayVoConvertor.convert(menus, false);
         return buildTreeMenu(menuEntities);
     }

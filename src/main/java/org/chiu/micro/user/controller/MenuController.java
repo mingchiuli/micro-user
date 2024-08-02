@@ -1,6 +1,6 @@
 package org.chiu.micro.user.controller;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 
 import org.chiu.micro.user.service.MenuService;
 import org.chiu.micro.user.req.MenuEntityReq;
@@ -33,8 +33,8 @@ public class MenuController {
     private final RoleMenuService roleMenuService;
 
     @PostMapping("/nav")
-    public Result<MenusAndButtonsVo> nav(@RequestBody @NotEmpty List<String> roles) {
-        return Result.success(() -> roleMenuService.getCurrentUserNav(roles));
+    public Result<MenusAndButtonsVo> nav(@RequestBody @NotBlank String role) {
+        return Result.success(() -> roleMenuService.getCurrentUserNav(role));
     }
 
     @GetMapping("/info/{id}")

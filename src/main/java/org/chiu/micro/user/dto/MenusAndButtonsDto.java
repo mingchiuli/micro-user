@@ -3,7 +3,6 @@ package org.chiu.micro.user.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.List;
 
 
@@ -13,7 +12,7 @@ import java.util.List;
  **/
 @Data
 @Builder
-public class MenusAndButtonsDto implements Serializable {
+public class MenusAndButtonsDto {
 
     private List<MenuDto> menus;
 

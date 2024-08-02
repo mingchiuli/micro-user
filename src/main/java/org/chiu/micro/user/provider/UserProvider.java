@@ -2,6 +2,7 @@ package org.chiu.micro.user.provider;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
 import org.chiu.micro.user.lang.Result;
@@ -81,7 +82,7 @@ public class UserProvider {
     }
 
     @PostMapping("/user/role/authority")
-    Result<List<String>> getAuthoritiesByRoleCodes(@RequestBody List<String> rawRoles) {
+    Result<List<String>> getAuthoritiesByRoleCodes(@RequestBody @NotBlank String rawRoles) {
         return Result.success(() -> roleAuthorityService.getAuthoritiesByRoleCodes(rawRoles));
     }
 }

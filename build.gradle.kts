@@ -30,7 +30,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.security:spring-security-crypto")
 	implementation("org.redisson:redisson-spring-boot-starter:3.34.1")
-	implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 	runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

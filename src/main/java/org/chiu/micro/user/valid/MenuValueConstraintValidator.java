@@ -38,7 +38,8 @@ public class MenuValueConstraintValidator implements ConstraintValidator<MenuVal
             return false;
         }
 
-        if (!pattern.matcher(menu.getUrl()).matches()) {
+        String url = menu.getUrl();
+        if (StringUtils.hasLength(url) && !pattern.matcher(url).matches()) {
             return false;
         }
 

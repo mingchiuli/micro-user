@@ -1,6 +1,5 @@
 package org.chiu.micro.user.constant;
 
-import java.io.Serializable;
 import java.util.List;
 
 
@@ -9,7 +8,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AuthMenuIndexMessage implements Serializable {
+public class AuthMenuIndexMessage {
     
     private List<String> roles;
 

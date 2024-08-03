@@ -1,7 +1,6 @@
 package org.chiu.micro.user.constant;
 
 
-import java.io.Serializable;
 
 import org.chiu.micro.user.lang.UserOperateEnum;
 
@@ -10,7 +9,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UserIndexMessage implements Serializable {
+public class UserIndexMessage {
 
     private Long userId;
 

@@ -2,9 +2,7 @@ package org.chiu.micro.user.config;
 
 import lombok.SneakyThrows;
 
-import org.chiu.micro.user.constant.AuthMenuIndexMessage;
 import org.chiu.micro.user.constant.UserAuthMenuOperateMessage;
-import org.chiu.micro.user.constant.UserIndexMessage;
 import org.chiu.micro.user.valid.ListValueConstraintValidator;
 import org.chiu.micro.user.valid.MenuValueConstraintValidator;
 import org.chiu.micro.user.valid.PhoneConstraintValidator;
@@ -27,8 +25,6 @@ public class CustomRuntimeHints implements RuntimeHintsRegistrar {
         hints.reflection().registerConstructor(UsernameConstraintValidator.class.getDeclaredConstructor(), ExecutableMode.INVOKE);
         hints.reflection().registerConstructor(MenuValueConstraintValidator.class.getDeclaredConstructor(), ExecutableMode.INVOKE);
 
-        hints.serialization().registerType(UserIndexMessage.class);
-        // hints.serialization().registerType(AuthMenuIndexMessage.class);
         hints.serialization().registerType(UserAuthMenuOperateMessage.class);
 
         hints.resources().registerPattern("ValidationMessages.properties");

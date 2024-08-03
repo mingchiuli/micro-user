@@ -27,9 +27,9 @@ public class CustomRuntimeHints implements RuntimeHintsRegistrar {
         hints.reflection().registerConstructor(UsernameConstraintValidator.class.getDeclaredConstructor(), ExecutableMode.INVOKE);
         hints.reflection().registerConstructor(MenuValueConstraintValidator.class.getDeclaredConstructor(), ExecutableMode.INVOKE);
 
-        // hints.serialization().registerType(UserIndexMessage.class);
+        hints.serialization().registerType(UserIndexMessage.class);
         // hints.serialization().registerType(AuthMenuIndexMessage.class);
-        // hints.serialization().registerType(UserAuthMenuOperateMessage.class);
+        hints.serialization().registerType(UserAuthMenuOperateMessage.class);
 
         hints.resources().registerPattern("ValidationMessages.properties");
 

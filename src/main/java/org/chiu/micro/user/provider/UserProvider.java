@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
  * UserProvider
  */
 @RestController
-@RequestMapping(value = "/inner")
+@RequestMapping(value = "/inner/user")
 @RequiredArgsConstructor
 @Validated
 public class UserProvider {
@@ -40,48 +40,48 @@ public class UserProvider {
 
     private final RoleAuthorityService roleAuthorityService;
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/{userId}")
     public Result<UserEntityRpcVo> findById(@PathVariable Long userId) {
         return Result.success(() -> userService.findById(userId));
     }
 
 
-    @GetMapping("/user/status/{username}/{status}")
+    @GetMapping("/status/{username}/{status}")
     public Result<Void> changeUserStatusByUsername(@PathVariable String username, @PathVariable Integer status) {
         return Result.success(() -> userService.changeUserStatusByUsername(username, status));
     }
 
-    @PostMapping("/user/role/{status}")
+    @PostMapping("/role/{status}")
     public Result<List<RoleEntityRpcVo>> findByRoleCodeInAndStatus(@RequestBody List<String> roles, @PathVariable(value = "status") Integer status) {
         return Result.success(() -> roleService.findByRoleCodeInAndStatus(roles, status));
     }
 
-    @PostMapping("/user/login/time/{username}")
+    @PostMapping("/login/time/{username}")
     void updateLoginTime(@PathVariable String username) {
         userService.updateLoginTime(username, LocalDateTime.now());
     }
 
-    @GetMapping("/user/email/{email}")
+    @GetMapping("/email/{email}")
     Result<UserEntityRpcVo> findByEmail(@PathVariable(value = "email") String email) {
         return Result.success(() -> userService.findByEmail(email));
     }
 
-    @GetMapping("/user/phone/{phone}")
+    @GetMapping("/phone/{phone}")
     Result<UserEntityRpcVo> findByPhone(@PathVariable(value = "phone") String phone) {
         return Result.success(() -> userService.findByPhone(phone));
     }
 
-    @GetMapping("/user/role/{userId}")
+    @GetMapping("/role/{userId}")
     Result<List<String>> findRoleCodesDecorByUserId(@PathVariable(value = "userId") Long userId) {
         return Result.success(() -> userRoleService.findRoleCodesDecorByUserId(userId));
     }
 
-    @GetMapping("/user/login/query/{username}")
+    @GetMapping("/login/query/{username}")
     Result<UserEntityRpcVo> findByUsernameOrEmailOrPhone(@PathVariable(value = "username") String username) {
         return Result.success(() -> userService.findByUsernameOrEmailOrPhone(username));
     }
 
-    @PostMapping("/user/role/authority")
+    @PostMapping("/role/authority")
     Result<List<String>> getAuthoritiesByRoleCodes(@RequestBody @NotBlank String rawRoles) {
         return Result.success(() -> roleAuthorityService.getAuthoritiesByRoleCodes(rawRoles));
     }

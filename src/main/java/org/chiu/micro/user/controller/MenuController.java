@@ -1,6 +1,5 @@
 package org.chiu.micro.user.controller;
 
-import jakarta.validation.constraints.NotBlank;
 
 import org.chiu.micro.user.service.MenuService;
 import org.chiu.micro.user.req.MenuEntityReq;
@@ -11,7 +10,6 @@ import org.chiu.micro.user.service.RoleMenuService;
 import org.chiu.micro.user.valid.MenuValue;
 import org.chiu.micro.user.vo.MenuDisplayVo;
 import org.chiu.micro.user.vo.MenuEntityVo;
-import org.chiu.micro.user.vo.MenusAndButtonsVo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,11 +29,6 @@ public class MenuController {
     private final MenuService menuService;
 
     private final RoleMenuService roleMenuService;
-
-    @PostMapping("/nav")
-    public Result<MenusAndButtonsVo> nav(@RequestBody @NotBlank String role) {
-        return Result.success(() -> roleMenuService.getCurrentUserNav(role));
-    }
 
     @GetMapping("/info/{id}")
     public Result<MenuEntityVo> info(@PathVariable(name = "id") Long id) {

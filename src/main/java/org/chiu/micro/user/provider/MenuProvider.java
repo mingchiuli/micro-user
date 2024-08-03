@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/inner/menu")
 public class MenuProvider {
 
-    private RoleMenuService roleMenuService;
+    private final RoleMenuService roleMenuService;
   
     @PostMapping("/nav")
     public Result<MenusAndButtonsVo> nav(@RequestBody @NotBlank String role) {

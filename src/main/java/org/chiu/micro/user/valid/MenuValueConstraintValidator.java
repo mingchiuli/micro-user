@@ -12,13 +12,10 @@ import org.chiu.micro.user.req.MenuEntityReq;
 import org.springframework.util.StringUtils;
 
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import static org.chiu.micro.user.lang.ExceptionMessage.*;
 
 public class MenuValueConstraintValidator implements ConstraintValidator<MenuValue, MenuEntityReq> {
-
-    private static final Pattern pattern = Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
 
     @Override
     public boolean isValid(MenuEntityReq menu, ConstraintValidatorContext context) {
@@ -35,11 +32,6 @@ public class MenuValueConstraintValidator implements ConstraintValidator<MenuVal
         }
 
         if (Objects.isNull(menu.getType())) {
-            return false;
-        }
-
-        String url = menu.getUrl();
-        if (StringUtils.hasLength(url) && !pattern.matcher(url).matches()) {
             return false;
         }
 

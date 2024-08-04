@@ -2,8 +2,8 @@ package org.chiu.micro.user.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +17,7 @@ public class UserAuthMenuChangeRabbitConfig {
 
     public static final String QUEUE = "user.auth.menu.change.queue.auth";
 
-    public static final String TOPIC_EXCHANGE = "user.auth.menu.change.topic.exchange";
-
-    public static final String BINDING_KEY = "user.auth.menu.change.binding";
+    public static final String FANOUT_EXCHANGE = "user.auth.menu.change.fanout.exchange";
 
     @Bean("authQueue")
     Queue authQueue() {
@@ -27,18 +25,17 @@ public class UserAuthMenuChangeRabbitConfig {
     }
 
     //ES交换机
-    @Bean("topicExchange")
-    TopicExchange exchange() {
-        return new TopicExchange(TOPIC_EXCHANGE, true, false);
+    @Bean("fanoutExchange")
+    FanoutExchange exchange() {
+        return new FanoutExchange(FANOUT_EXCHANGE, true, false);
     }
 
     //绑定ES队列和ES交换机
     @Bean("authBinding")
     Binding esBinding(@Qualifier("authQueue") Queue authQueue,
-                      @Qualifier("topicExchange") TopicExchange exchange) {
+                      @Qualifier("fanoutExchange") FanoutExchange exchange) {
         return BindingBuilder
                 .bind(authQueue)
-                .to(exchange)
-                .with(BINDING_KEY);
+                .to(exchange);
     }
 }

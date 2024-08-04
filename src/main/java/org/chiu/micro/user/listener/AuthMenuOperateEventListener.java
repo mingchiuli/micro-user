@@ -19,8 +19,6 @@ public class AuthMenuOperateEventListener {
 
     private final RabbitTemplate rabbitTemplate;
 
-    private static final String BINDING_KEY_MODE = "user.auth.menu.change.binding";
-
     @EventListener
     @Async("commonExecutor")
     public void process(AuthMenuOperateEvent event) {
@@ -32,7 +30,7 @@ public class AuthMenuOperateEventListener {
                 .roles(roles)
                 .type(type)
                 .build();
-        rabbitTemplate.convertAndSend(UserAuthMenuChangeRabbitConfig.TOPIC_EXCHANGE, BINDING_KEY_MODE, data);
+        rabbitTemplate.convertAndSend(UserAuthMenuChangeRabbitConfig.FANOUT_EXCHANGE, "", data);
     }
 
 }

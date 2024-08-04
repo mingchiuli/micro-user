@@ -17,13 +17,7 @@ public enum Const {
 
     REGISTER_PREFIX("register_prefix:"),
 
-    USER("user"),
-    
-    CACHE_EVICT_FANOUT_EXCHANGE("cache.user.evict.fanout.exchange"),
-    
-    CACHE_USER_EVICT_EXCHANGE("cache.user.direct.exchange"),
-    
-    CACHE_USER_EVICT_BINDING_KEY("cache.user.evict.binding");
+    USER("user");
 
     private final String info;
 }

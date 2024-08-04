@@ -19,7 +19,7 @@ public class UserAuthMenuChangeRabbitConfig {
 
     public static final String TOPIC_EXCHANGE = "user.auth.menu.change.topic.exchange";
 
-    public static final String BINDING_KEY = "user.auth.menu.change.binding.auth";
+    public static final String BINDING_KEY = "user.auth.menu.change.binding";
 
     @Bean("authQueue")
     Queue authQueue() {
@@ -35,10 +35,10 @@ public class UserAuthMenuChangeRabbitConfig {
     //绑定ES队列和ES交换机
     @Bean("authBinding")
     Binding esBinding(@Qualifier("authQueue") Queue authQueue,
-                      @Qualifier("topicExchange") TopicExchange authExchange) {
+                      @Qualifier("topicExchange") TopicExchange exchange) {
         return BindingBuilder
                 .bind(authQueue)
-                .to(authExchange)
+                .to(exchange)
                 .with(BINDING_KEY);
     }
 }

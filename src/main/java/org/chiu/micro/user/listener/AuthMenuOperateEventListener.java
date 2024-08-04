@@ -19,7 +19,7 @@ public class AuthMenuOperateEventListener {
 
     private final RabbitTemplate rabbitTemplate;
 
-    private static final String BINDING_KEY_MODE = "user.auth.menu.change.binding.#";
+    private static final String BINDING_KEY_MODE = "user.auth.menu.change.binding";
 
     @EventListener
     @Async("commonExecutor")

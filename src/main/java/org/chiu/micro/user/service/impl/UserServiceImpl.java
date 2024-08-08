@@ -13,6 +13,8 @@ import org.chiu.micro.user.req.ImgUploadReq;
 import org.chiu.micro.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -25,6 +27,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
 
 import static org.chiu.micro.user.lang.Const.*;
 import static org.chiu.micro.user.lang.ExceptionMessage.*;
@@ -46,6 +49,9 @@ public class UserServiceImpl implements UserService {
     private final OssSignUtils ossSignUtils;
 
     private final ObjectMapper objectMapper;
+
+    @Qualifier("commonExecutor")
+    private final ExecutorService taskExecutor;
 
     @Value("${blog.oss.base-url}")
     private String baseUrl;
@@ -101,7 +107,7 @@ public class UserServiceImpl implements UserService {
         headers.put(HttpHeaders.AUTHORIZATION, ossSignUtils.getAuthorization(objectName, HttpMethod.PUT.name(), "image/jpg"));
         headers.put(HttpHeaders.CACHE_CONTROL,  "no-cache");
         headers.put(HttpHeaders.CONTENT_TYPE, "image/jpg");
-        ossHttpService.putOssObject(objectName, imageBytes, headers);
+        taskExecutor.submit(() -> ossHttpService.putOssObject(objectName, imageBytes, headers));
         return baseUrl + "/" + objectName;
     }
 
